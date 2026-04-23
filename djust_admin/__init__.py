@@ -1,48 +1,27 @@
 """
-djust-admin: A modern, reactive Django admin interface powered by djust.
+djust-admin — now part of djust.
 
-This package provides a drop-in replacement for Django's built-in admin
-with real-time updates, plugin architecture, and a modern UX.
+This package has been folded into djust core. Install djust instead:
+
+    pip install djust
+
+All functionality is now available at djust.admin_ext.
 """
+import warnings
 
-__version__ = "0.2.0"
+warnings.warn(
+    "djust-admin is deprecated. Use 'pip install djust' and import "
+    "from djust.admin_ext instead. See MIGRATION.md for details.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
-# Import adapters module to register admin_tailwind adapter
-from . import adapters  # noqa: F401
-from .decorators import action, display, register
-from .options import DjustModelAdmin
-from .plugins import AdminPage, AdminPlugin, AdminWidget, NavItem
-from .sites import DjustAdminSite
+# Re-export everything from the new djust location
+from djust.admin_ext import *  # noqa: F401, F403, E402
 
-# Default admin site instance
-site = DjustAdminSite()
+try:
+    from djust.admin_ext import __all__  # noqa: E402, F401
+except ImportError:
+    __all__ = []
 
-
-def autodiscover():
-    """
-    Auto-discover djust_admin.py modules in all installed apps.
-
-    Similar to django.contrib.admin.autodiscover() but looks for
-    djust_admin.py instead of admin.py to avoid conflicts.
-    """
-    from django.utils.module_loading import autodiscover_modules
-
-    autodiscover_modules("djust_admin", register_to=site)
-
-
-default_app_config = "djust_admin.apps.DjustAdminConfig"
-
-
-__all__ = [
-    "DjustAdminSite",
-    "DjustModelAdmin",
-    "AdminPlugin",
-    "AdminPage",
-    "AdminWidget",
-    "NavItem",
-    "register",
-    "action",
-    "display",
-    "site",
-    "autodiscover",
-]
+__version__ = "99.0.0"
